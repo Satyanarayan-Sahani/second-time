@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimized Digital Systems Quiz</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load React and ReactDOM production versions for speed -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Custom CSS for animations -->
+    <style>
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes fadeInLeft {
+        from { opacity: 0; transform: translateX(10px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+
+      .animate-fadeIn {
+        animation: fadeIn 0.5s ease-out forwards;
+      }
+
+      .animate-fadeInLeft {
+        animation: fadeInLeft 0.5s ease-out forwards;
+      }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+  <div id="root"></div>
+
+  <!--
+    The main React code, written in pure JavaScript for maximum performance.
+    All JSX is replaced with React.createElement calls, removing the need for Babel.
+  -->
+  <script>
+    const { useState, useRef, useEffect, createElement: e } = React;
+
+    // Icon components from Lucide, manually defined as SVG to avoid external imports
+    const BadgeCheck = (props) => e('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
+      e('path', { d: "M14.5 7h-9" }),
+      e('path', { d: "M10 16L8 14" }),
+      e('path', { d: "M17 14L12 19L10 17" }),
+      e('path', { d: "M20 12.2V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12.2" }),
+      e('path', { d: "M20 7h-3" }),
+      e('path', { d: "M17 7V3" })
+    );
+    const RefreshCcw = (props) => e('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
+      e('path', { d: "M21 12a9 9 0 0 0-9-9" }),
+      e('path', { d: "M3 12a9 9 0 0 0 9 9" }),
+      e('path', { d: "M16 16.5L12 12.5L16 8.5" }),
+      e('path', { d: "M8 12L12 8L8 4" }),
+      e('path', { d: "M12 21L12 12" }),
+      e('path', { d: "M21 12H3" }),
+    );
+    const ChevronLeft = (props) => e('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
+      e('path', { d: "m15 18-6-6 6-6" })
+    );
+    const ChevronRight = (props) => e('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
+      e('path', { d: "m9 18 6-6-6-6" })
+    );
+    const ChevronsRight = (props) => e('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
+      e('path', { d: "m6 17 5-5-5-5" }),
+      e('path', { d: "m13 17 5-5-5-5" })
+    );
+
+    // The data for the 50 Fundamental Digital Systems questions
+    const questions = [
+        {
+          questionText: 'What is the binary equivalent of the decimal number 13?',
+          answerOptions: [
+            { answerText: '1101', isCorrect: true },
+            { answerText: '1011', isCorrect: false },
+            { answerText: '1110', isCorrect: false },
+            { answerText: '1001', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the decimal equivalent of the binary number 10101?',
+          answerOptions: [
+            { answerText: '20', isCorrect: false },
+            { answerText: '21', isCorrect: true },
+            { answerText: '19', isCorrect: false },
+            { answerText: '22', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the hexadecimal equivalent of the decimal number 255?',
+          answerOptions: [
+            { answerText: 'FF', isCorrect: true },
+            { answerText: 'EF', isCorrect: false },
+            { answerText: 'FE', isCorrect: false },
+            { answerText: '100', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'Which logic gate produces a HIGH output only when all of its inputs are HIGH?',
+          answerOptions: [
+            { answerText: 'OR gate', isCorrect: false },
+            { answerText: 'XOR gate', isCorrect: false },
+            { answerText: 'AND gate', isCorrect: true },
+            { answerText: 'NOT gate', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'The output of an XOR gate is HIGH if...',
+          answerOptions: [
+            { answerText: 'all inputs are HIGH.', isCorrect: false },
+            { answerText: 'all inputs are LOW.', isCorrect: false },
+            { answerText: 'the inputs are different.', isCorrect: true },
+            { answerText: 'at least one input is HIGH.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the simplified Boolean expression for A + AB?',
+          answerOptions: [
+            { answerText: 'A + B', isCorrect: false },
+            { answerText: 'B', isCorrect: false },
+            { answerText: '1', isCorrect: false },
+            { answerText: 'A', isCorrect: true },
+          ],
+        },
+        {
+          questionText: 'Which of the following is an example of a combinational logic circuit?',
+          answerOptions: [
+            { answerText: 'Flip-flop', isCorrect: false },
+            { answerText: 'Counter', isCorrect: false },
+            { answerText: 'Decoder', isCorrect: true },
+            { answerText: 'Register', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What does a full adder circuit do?',
+          answerOptions: [
+            { answerText: 'Adds three binary digits including a carry-in bit.', isCorrect: true },
+            { answerText: 'Adds two binary digits.', isCorrect: false },
+            { answerText: 'Subtracts two binary digits.', isCorrect: false },
+            { answerText: 'Multiplies two binary digits.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'A flip-flop is a fundamental building block of which type of circuit?',
+          answerOptions: [
+            { answerText: 'Combinational', isCorrect: false },
+            { answerText: 'Multiplexer', isCorrect: false },
+            { answerText: 'Sequential', isCorrect: true },
+            { answerText: 'Decoder', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the purpose of a multiplexer?',
+          answerOptions: [
+            { answerText: 'To convert multiple inputs to a single output based on a select line.', isCorrect: true },
+            { answerText: 'To convert a single input to multiple outputs.', isCorrect: false },
+            { answerText: 'To store a single bit of information.', isCorrect: false },
+            { answerText: 'To add binary numbers.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the output of a NAND gate with inputs A=1 and B=1?',
+          answerOptions: [
+            { answerText: '0', isCorrect: true },
+            { answerText: '1', isCorrect: false },
+            { answerText: 'Undetermined', isCorrect: false },
+            { answerText: 'Equal to A', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'A JK flip-flop is said to be in a toggle state when...',
+          answerOptions: [
+            { answerText: 'J=0, K=0', isCorrect: false },
+            { answerText: 'J=0, K=1', isCorrect: false },
+            { answerText: 'J=1, K=0', isCorrect: false },
+            { answerText: 'J=1, K=1', isCorrect: true },
+          ],
+        },
+        {
+          questionText: 'What is the main characteristic of a sequential circuit that distinguishes it from a combinational circuit?',
+          answerOptions: [
+            { answerText: 'It has memory and its output depends on both current and past inputs.', isCorrect: true },
+            { answerText: 'Its output depends only on the current inputs.', isCorrect: false },
+            { answerText: 'It is always synchronous.', isCorrect: false },
+            { answerText: 'It does not use logic gates.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'How many bits are in a byte?',
+          answerOptions: [
+            { answerText: '4', isCorrect: false },
+            { answerText: '8', isCorrect: true },
+            { answerText: '16', isCorrect: false },
+            { answerText: '32', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'Which number system has a base of 16?',
+          answerOptions: [
+            { answerText: 'Binary', isCorrect: false },
+            { answerText: 'Decimal', isCorrect: false },
+            { answerText: 'Octal', isCorrect: false },
+            { answerText: 'Hexadecimal', isCorrect: true },
+          ],
+        },
+        {
+          questionText: 'What is a BCD (Binary-Coded Decimal) code?',
+          answerOptions: [
+            { answerText: 'A code where each decimal digit is represented by a 4-bit binary code.', isCorrect: true },
+            { answerText: 'A code used for error detection.', isCorrect: false },
+            { answerText: 'A code that uses 8 bits for each digit.', isCorrect: false },
+            { answerText: 'A code used to represent floating-point numbers.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the main function of a decoder?',
+          answerOptions: [
+            { answerText: 'To encode binary data into a more complex form.', isCorrect: false },
+            { answerText: 'To select a single output line from multiple input lines.', isCorrect: false },
+            { answerText: 'To convert binary information from N input lines to a maximum of 2^N output lines.', isCorrect: true },
+            { answerText: 'To store binary data.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the result of 1101 + 0110 in binary?',
+          answerOptions: [
+            { answerText: '10011', isCorrect: false },
+            { answerText: '10010', isCorrect: true },
+            { answerText: '11111', isCorrect: false },
+            { answerText: '10101', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the purpose of a D flip-flop?',
+          answerOptions: [
+            { answerText: 'To act as a one-bit memory cell that stores the value of the D input when clocked.', isCorrect: true },
+            { answerText: 'To toggle its output on every clock pulse.', isCorrect: false },
+            { answerText: 'To provide a delayed output.', isCorrect: false },
+            { answerText: 'To be a combinational circuit.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'A 4-bit ripple counter uses how many flip-flops?',
+          answerOptions: [
+            { answerText: '1', isCorrect: false },
+            { answerText: '2', isCorrect: false },
+            { answerText: '4', isCorrect: true },
+            { answerText: '8', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is a Karnaugh map (K-map) used for?',
+          answerOptions: [
+            { answerText: 'To draw logic circuits.', isCorrect: false },
+            { answerText: 'To simplify Boolean expressions.', isCorrect: true },
+            { answerText: 'To store data in memory.', isCorrect: false },
+            { answerText: 'To convert binary to decimal.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'Which of the following gates is considered a universal gate?',
+          answerOptions: [
+            { answerText: 'XOR', isCorrect: false },
+            { answerText: 'OR', isCorrect: false },
+            { answerText: 'NAND', isCorrect: true },
+            { answerText: 'AND', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the gray code equivalent of the binary number 1011?',
+          answerOptions: [
+            { answerText: '1100', isCorrect: false },
+            { answerText: '1110', isCorrect: false },
+            { answerText: '1111', isCorrect: true },
+            { answerText: '1001', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What does an ADC (Analog-to-Digital Converter) do?',
+          answerOptions: [
+            { answerText: 'It converts a digital signal to an analog signal.', isCorrect: false },
+            { answerText: 'It converts a continuous analog signal to a discrete digital signal.', isCorrect: true },
+            { answerText: 'It converts binary to decimal.', isCorrect: false },
+            { answerText: 'It amplifies an analog signal.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the purpose of a register?',
+          answerOptions: [
+            { answerText: 'To perform arithmetic operations.', isCorrect: false },
+            { answerText: 'To store a single bit of data.', isCorrect: false },
+            { answerText: 'To store multiple bits of data in a sequential manner.', isCorrect: true },
+            { answerText: 'To control the flow of data.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'Which of De Morgan\'s theorems is represented by (A+B)\' = A\'B\'?',
+          answerOptions: [
+            { answerText: 'The first theorem.', isCorrect: true },
+            { answerText: 'The second theorem.', isCorrect: false },
+            { answerText: 'The commutative law.', isCorrect: false },
+            { answerText: 'The distributive law.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is a half adder used for?',
+          answerOptions: [
+            { answerText: 'Adding two binary digits with a carry-in.', isCorrect: false },
+            { answerText: 'Adding two binary digits without a carry-in.', isCorrect: true },
+            { answerText: 'Subtracting binary digits.', isCorrect: false },
+            { answerText: 'Multiplying binary digits.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the term for the time delay between an input changing and the output responding in a logic gate?',
+          answerOptions: [
+            { answerText: 'Setup time.', isCorrect: false },
+            { answerText: 'Hold time.', isCorrect: false },
+            { answerText: 'Propagation delay.', isCorrect: true },
+            { answerText: 'Clock cycle.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the output of an OR gate with inputs A=0 and B=0?',
+          answerOptions: [
+            { answerText: '0', isCorrect: true },
+            { answerText: '1', isCorrect: false },
+            { answerText: 'Undetermined', isCorrect: false },
+            { answerText: 'Equal to A', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'Which type of counter counts in a sequence that is not 0, 1, 2, 3...?',
+          answerOptions: [
+            { answerText: 'Asynchronous counter', isCorrect: false },
+            { answerText: 'Synchronous counter', isCorrect: false },
+            { answerText: 'Up counter', isCorrect: false },
+            { answerText: 'Modulus counter', isCorrect: true },
+          ],
+        },
+        {
+          questionText: 'What is the octal equivalent of the binary number 110101?',
+          answerOptions: [
+            { answerText: '65', isCorrect: true },
+            { answerText: '55', isCorrect: false },
+            { answerText: '51', isCorrect: false },
+            { answerText: '61', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is a DAC (Digital-to-Analog Converter) used for?',
+          answerOptions: [
+            { answerText: 'Converting an analog signal to a digital one.', isCorrect: false },
+            { answerText: 'Converting a digital signal into a continuous analog voltage or current.', isCorrect: true },
+            { answerText: 'Multiplexing digital signals.', isCorrect: false },
+            { answerText: 'Storing digital data.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the maximum number of states for a 3-bit counter?',
+          answerOptions: [
+            { answerText: '3', isCorrect: false },
+            { answerText: '6', isCorrect: false },
+            { answerText: '8', isCorrect: true },
+            { answerText: '16', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'A 2-to-1 multiplexer requires how many select lines?',
+          answerOptions: [
+            { answerText: '1', isCorrect: true },
+            { answerText: '2', isCorrect: false },
+            { answerText: '3', isCorrect: false },
+            { answerText: '4', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the purpose of a NOT gate?',
+          answerOptions: [
+            { answerText: 'To invert the input signal.', isCorrect: true },
+            { answerText: 'To add two signals.', isCorrect: false },
+            { answerText: 'To multiply two signals.', isCorrect: false },
+            { answerText: 'To store a bit of data.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the 1\'s complement of the binary number 10110?',
+          answerOptions: [
+            { answerText: '01001', isCorrect: true },
+            { answerText: '01010', isCorrect: false },
+            { answerText: '10111', isCorrect: false },
+            { answerText: '01000', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is a synchronous counter?',
+          answerOptions: [
+            { answerText: 'A counter where all flip-flops are clocked at the same time.', isCorrect: true },
+            { answerText: 'A counter where each flip-flop is clocked by the previous one\'s output.', isCorrect: false },
+            { answerText: 'A counter that only counts upwards.', isCorrect: false },
+            { answerText: 'A counter that is a combinational circuit.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the hexadecimal representation of the binary number 11110000?',
+          answerOptions: [
+            { answerText: 'F0', isCorrect: true },
+            { answerText: 'E0', isCorrect: false },
+            { answerText: 'FF', isCorrect: false },
+            { answerText: '0F', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the main advantage of using a K-map over Boolean algebra for simplification?',
+          answerOptions: [
+            { answerText: 'It is a more precise method.', isCorrect: false },
+            { answerText: 'It is faster for a large number of variables.', isCorrect: false },
+            { answerText: 'It is a more systematic and visual method that is less prone to error for up to 4 or 5 variables.', isCorrect: true },
+            { answerText: 'It can only be used for minterms.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the output of an XNOR gate with inputs A=1 and B=0?',
+          answerOptions: [
+            { answerText: '0', isCorrect: true },
+            { answerText: '1', isCorrect: false },
+            { answerText: 'Undetermined', isCorrect: false },
+            { answerText: 'Equal to A', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the purpose of the enable input on a register?',
+          answerOptions: [
+            { answerText: 'To load new data into the register.', isCorrect: true },
+            { answerText: 'To clear the register to all zeros.', isCorrect: false },
+            { answerText: 'To select which data to output.', isCorrect: false },
+            { answerText: 'To toggle the output of the register.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the simplest form of a flip-flop?',
+          answerOptions: [
+            { answerText: 'JK flip-flop', isCorrect: false },
+            { answerText: 'T flip-flop', isCorrect: false },
+            { answerText: 'SR latch', isCorrect: true },
+            { answerText: 'D flip-flop', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'In a digital system, a clock signal is used for...',
+          answerOptions: [
+            { answerText: 'providing power to the circuit.', isCorrect: false },
+            { answerText: 'synchronizing the operation of sequential circuits.', isCorrect: true },
+            { answerText: 'displaying the time on a screen.', isCorrect: false },
+            { answerText: 'generating random numbers.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What does the term "minterm" refer to in Boolean algebra?',
+          answerOptions: [
+            { answerText: 'A product term where each variable appears exactly once, either complemented or uncomplemented.', isCorrect: true },
+            { answerText: 'A sum of product terms.', isCorrect: false },
+            { answerText: 'The smallest possible Boolean expression.', isCorrect: false },
+            { answerText: 'A term that is always equal to 0.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'Which logic gate is the inverse of an AND gate?',
+          answerOptions: [
+            { answerText: 'OR', isCorrect: false },
+            { answerText: 'NOT', isCorrect: false },
+            { answerText: 'XOR', isCorrect: false },
+            { answerText: 'NAND', isCorrect: true },
+          ],
+        },
+        {
+          questionText: 'What is the octal equivalent of the hexadecimal number 3A?',
+          answerOptions: [
+            { answerText: '72', isCorrect: false },
+            { answerText: '70', isCorrect: false },
+            { answerText: '71', isCorrect: false },
+            { answerText: '72', isCorrect: true },
+          ],
+        },
+        {
+          questionText: 'What is a synchronous counter?',
+          answerOptions: [
+            { answerText: 'A counter where all flip-flops are clocked at the same time.', isCorrect: true },
+            { answerText: 'A counter where each flip-flop is clocked by the previous one\'s output.', isCorrect: false },
+            { answerText: 'A counter that only counts upwards.', isCorrect: false },
+            { answerText: 'A counter that is a combinational circuit.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the purpose of a register?',
+          answerOptions: [
+            { answerText: 'To perform arithmetic operations.', isCorrect: false },
+            { answerText: 'To store a single bit of data.', isCorrect: false },
+            { answerText: 'To store multiple bits of data in a sequential manner.', isCorrect: true },
+            { answerText: 'To control the flow of data.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'Which of the following gates is considered a universal gate?',
+          answerOptions: [
+            { answerText: 'XOR', isCorrect: false },
+            { answerText: 'OR', isCorrect: false },
+            { answerText: 'NAND', isCorrect: true },
+            { answerText: 'AND', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'A 4-bit ripple counter uses how many flip-flops?',
+          answerOptions: [
+            { answerText: '1', isCorrect: false },
+            { answerText: '2', isCorrect: false },
+            { answerText: '4', isCorrect: true },
+            { answerText: '8', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'The output of an XNOR gate is HIGH if...',
+          answerOptions: [
+            { answerText: 'the inputs are the same.', isCorrect: true },
+            { answerText: 'the inputs are different.', isCorrect: false },
+            { answerText: 'all inputs are HIGH.', isCorrect: false },
+            { answerText: 'at least one input is HIGH.', isCorrect: false },
+          ],
+        },
+      ];
+
+    // The main App component
+    const App = () => {
+      const [currentQuestion, setCurrentQuestion] = useState(0);
+      const [showScore, setShowScore] = useState(false);
+      const [userAnswers, setUserAnswers] = useState(Array(questions.length).fill(null));
+
+      const sidebarRef = useRef(null);
+
+      useEffect(() => {
+        if (sidebarRef.current) {
+          const activeElement = sidebarRef.current.querySelector('.bg-blue-600');
+          if (activeElement) {
+            activeElement.scrollIntoView({
+              behavior: 'smooth',
+              block: 'nearest'
+            });
+          }
+        }
+      }, [currentQuestion]);
+
+      const handleAnswerOptionClick = (answerIndex) => {
+        const newAnswers = [...userAnswers];
+        newAnswers[currentQuestion] = answerIndex;
+        setUserAnswers(newAnswers);
+      };
+
+      const handleNextClick = () => {
+        const nextQuestion = currentQuestion + 1;
+        if (nextQuestion < questions.length) {
+          setCurrentQuestion(nextQuestion);
+        } else {
+          setShowScore(true);
+        }
+      };
+
+      const handlePreviousClick = () => {
+        const previousQuestion = currentQuestion - 1;
+        if (previousQuestion >= 0) {
+          setCurrentQuestion(previousQuestion);
+        }
+      };
+      
+      const handleSkipClick = () => {
+        handleNextClick();
+      };
+      
+      const handleQuestionNumberClick = (questionNumber) => {
+        setCurrentQuestion(questionNumber - 1);
+      };
+
+      const calculateScore = () => {
+        return userAnswers.reduce((total, answerIndex, index) => {
+          if (answerIndex !== null) {
+            const isCorrect = questions[index].answerOptions[answerIndex].isCorrect;
+            return total + (isCorrect ? 1 : 0);
+          }
+          return total;
+        }, 0);
+      };
+
+      const restartQuiz = () => {
+        setCurrentQuestion(0);
+        setUserAnswers(Array(questions.length).fill(null));
+        setShowScore(false);
+      };
+
+      const currentAnswerIndex = userAnswers[currentQuestion];
+      const finalScore = showScore ? calculateScore() : 0;
+      
+      // The render method is now pure JavaScript
+      return e('div', { className: 'bg-gray-100 min-h-screen font-sans flex items-center justify-center p-4 dark:bg-gray-900 transition-colors duration-300' },
+        e('div', { className: 'bg-white dark:bg-gray-800 shadow-2xl rounded-3xl p-8 w-full h-full max-w-screen-lg flex flex-col md:flex-row gap-8 text-gray-800 dark:text-gray-200 transition-colors duration-300' },
+          e('div', { className: 'md:flex-1 w-full animate-fadeIn' },
+            showScore ?
+              e('div', { className: 'text-center md:p-8' },
+                e('div', { className: 'flex justify-center mb-6' }, e(BadgeCheck, { className: 'w-16 h-16 text-green-500' })),
+                e('h2', { className: 'text-3xl sm:text-4xl font-extrabold mb-4' }, 'Quiz Complete!'),
+                e('p', { className: 'text-xl mb-8' },
+                  'You scored ',
+                  e('span', { className: 'text-blue-500 font-bold' }, finalScore),
+                  ` out of ${questions.length}`
+                ),
+                e('button', {
+                  onClick: restartQuiz,
+                  className: 'group relative flex items-center justify-center px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50'
+                }, e(RefreshCcw, { className: 'w-5 h-5 mr-2 transition-all duration-300 group-hover:rotate-180' }), 'Restart Quiz')
+              ) :
+              e('div', { className: 'w-full' },
+                e('div', { className: 'mb-6' },
+                  e('h1', { className: 'text-4xl font-extrabold text-center text-blue-600 dark:text-blue-400 mb-2' }, 'Digital Systems Quiz'),
+                  e('div', { className: 'flex justify-between items-center' },
+                    e('div', { className: 'text-lg font-semibold text-blue-600 dark:text-blue-400' }, `Question ${currentQuestion + 1} / ${questions.length}`),
+                    e('div', { className: 'text-xl font-bold' },
+                      e('span', { className: 'text-green-500' }, userAnswers.filter(answer => answer !== null).length),
+                      ' answered'
+                    )
+                  )
+                ),
+                e('div', { className: 'mb-8' },
+                  e('h2', { className: 'text-2xl sm:text-3xl font-extrabold leading-tight' }, questions[currentQuestion].questionText)
+                ),
+                e('div', { className: 'flex flex-col space-y-4 mb-8' },
+                  questions[currentQuestion].answerOptions.map((answerOption, index) =>
+                    e('button', {
+                      key: index,
+                      onClick: () => handleAnswerOptionClick(index),
+                      className: `group relative flex items-center w-full px-6 py-4 text-left text-lg rounded-xl shadow-md transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 ${currentAnswerIndex === index ? 'bg-blue-600 text-white shadow-lg' : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-blue-100 dark:hover:bg-blue-600'}`
+                    },
+                      e('span', { className: 'flex-1' }, answerOption.answerText),
+                      currentAnswerIndex === index && e(BadgeCheck, { className: 'w-6 h-6 ml-4 text-white' })
+                    )
+                  )
+                ),
+                e('div', { className: 'flex justify-between gap-4' },
+                  e('button', {
+                    onClick: handlePreviousClick,
+                    disabled: currentQuestion === 0,
+                    className: `group relative flex items-center justify-center px-6 py-3 font-bold rounded-full transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 ${currentQuestion === 0 ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed' : 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-600'}`
+                  }, e(ChevronLeft, { className: 'w-5 h-5 mr-2' }), 'Previous'),
+                  e('div', { className: 'flex gap-4' },
+                    currentQuestion < questions.length - 1 && e('button', {
+                      onClick: handleSkipClick,
+                      className: 'group relative flex items-center justify-center px-8 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-bold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-yellow-500 focus:ring-opacity-50'
+                    }, 'Skip', e(ChevronsRight, { className: 'w-5 h-5 ml-2 transition-all duration-300 group-hover:translate-x-1' })),
+                    currentQuestion < questions.length - 1 ? e('button', {
+                      onClick: handleNextClick,
+                      disabled: currentAnswerIndex === null,
+                      className: 'group relative flex items-center justify-center px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50'
+                    }, 'Next', e(ChevronRight, { className: 'w-5 h-5 ml-2 transition-all duration-300 group-hover:translate-x-1' })) : e('button', {
+                      onClick: handleNextClick,
+                      className: 'group relative flex items-center justify-center px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-green-500 focus:ring-opacity-50'
+                    }, 'Submit Quiz', e(BadgeCheck, { className: 'w-5 h-5 ml-2 transition-all duration-300 group-hover:rotate-12' }))
+                  )
+                )
+              )
+          ),
+          e('div', { className: 'md:w-64 w-full md:block hidden animate-fadeInLeft' },
+            e('div', { className: 'bg-gray-50 dark:bg-gray-700 rounded-2xl p-6 h-full overflow-y-auto shadow-md' },
+              e('h3', { className: 'text-lg font-bold text-gray-800 dark:text-gray-200 mb-4 sticky top-0 bg-gray-50 dark:bg-gray-700 pt-1 pb-2 border-b border-gray-200 dark:border-gray-600' }, 'Jump to Question'),
+              e('div', { ref: sidebarRef, className: 'flex flex-wrap gap-2 justify-center' },
+                questions.map((_, index) =>
+                  e('button', {
+                    key: index,
+                    onClick: () => handleQuestionNumberClick(index + 1),
+                    className: `w-10 h-10 text-sm font-bold rounded-full transition-all duration-200 ${currentQuestion === index ? 'bg-blue-600 text-white shadow-lg transform scale-110' : userAnswers[index] !== null ? 'bg-green-500 text-white hover:bg-green-600 shadow-md' : 'bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-500'}`
+                  }, index + 1)
+                )
+              )
+            )
+          )
+        )
+      );
+    };
+
+    // Render the React component into the root element
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(e(App));
+  </script>
+</body>
+</html>

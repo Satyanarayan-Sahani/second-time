@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimized C++ Programming Quiz</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load React and ReactDOM production versions for speed -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Custom CSS for animations -->
+    <style>
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes fadeInLeft {
+        from { opacity: 0; transform: translateX(10px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+
+      .animate-fadeIn {
+        animation: fadeIn 0.5s ease-out forwards;
+      }
+
+      .animate-fadeInLeft {
+        animation: fadeInLeft 0.5s ease-out forwards;
+      }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+  <div id="root"></div>
+
+  <!--
+    The main React code, written in pure JavaScript for maximum performance.
+    All JSX is replaced with React.createElement calls, removing the need for Babel.
+  -->
+  <script>
+    const { useState, useRef, useEffect, createElement: e } = React;
+    
+    // Icon components from Lucide, manually defined as SVG to avoid external imports
+    const BadgeCheck = (props) => e('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
+      e('path', { d: "M14.5 7h-9" }),
+      e('path', { d: "M10 16L8 14" }),
+      e('path', { d: "M17 14L12 19L10 17" }),
+      e('path', { d: "M20 12.2V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12.2" }),
+      e('path', { d: "M20 7h-3" }),
+      e('path', { d: "M17 7V3" })
+    );
+    const RefreshCcw = (props) => e('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
+      e('path', { d: "M21 12a9 9 0 0 0-9-9" }),
+      e('path', { d: "M3 12a9 9 0 0 0 9 9" }),
+      e('path', { d: "M16 16.5L12 12.5L16 8.5" }),
+      e('path', { d: "M8 12L12 8L8 4" }),
+      e('path', { d: "M12 21L12 12" }),
+      e('path', { d: "M21 12H3" }),
+    );
+    const ChevronLeft = (props) => e('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
+      e('path', { d: "m15 18-6-6 6-6" })
+    );
+    const ChevronRight = (props) => e('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
+      e('path', { d: "m9 18 6-6-6-6" })
+    );
+    const ChevronsRight = (props) => e('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
+      e('path', { d: "m6 17 5-5-5-5" }),
+      e('path', { d: "m13 17 5-5-5-5" })
+    );
+    
+    // The data for the 50 C++ Programming questions
+    const questions = [
+        {
+          questionText: 'What is the correct syntax for defining a class in C++?',
+          answerOptions: [
+            { answerText: 'class MyClass { ... };', isCorrect: true },
+            { answerText: 'define class MyClass { ... };', isCorrect: false },
+            { answerText: 'class MyClass { ... }', isCorrect: false },
+            { answerText: 'Class MyClass { ... };', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'Which keyword is used to access a base class member from a derived class?',
+          answerOptions: [
+            { answerText: 'this', isCorrect: false },
+            { answerText: 'parent', isCorrect: false },
+            { answerText: 'super', isCorrect: false },
+            { answerText: 'The base class name followed by `::`', isCorrect: true },
+          ],
+        },
+        {
+          questionText: 'What is the purpose of a constructor?',
+          answerOptions: [
+            { answerText: 'To destroy an object when it goes out of scope', isCorrect: false },
+            { answerText: 'To initialize an object when it is created', isCorrect: true },
+            { answerText: 'To declare a new variable', isCorrect: false },
+            { answerText: 'To copy an object', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is a destructor in C++?',
+          answerOptions: [
+            { answerText: 'A function that initializes an object', isCorrect: false },
+            { answerText: 'A function that is called when an object is destroyed', isCorrect: true },
+            { answerText: 'A special type of constructor', isCorrect: false },
+            { answerText: 'A function used to create a new object', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What does the `public` access specifier mean?',
+          answerOptions: [
+            { answerText: 'Members can only be accessed from within the class', isCorrect: false },
+            { answerText: 'Members can be accessed from anywhere in the program', isCorrect: true },
+            { answerText: 'Members can be accessed by the class itself and its derived classes', isCorrect: false },
+            { answerText: 'Members are hidden and cannot be accessed', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'Which of the following is an example of polymorphism?',
+          answerOptions: [
+            { answerText: 'Function overloading', isCorrect: true },
+            { answerText: 'Class inheritance', isCorrect: false },
+            { answerText: 'Object creation', isCorrect: false },
+            { answerText: 'Variable declaration', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'How do you declare a reference to an integer `x`?',
+          answerOptions: [
+            { answerText: 'int &y = x;', isCorrect: true },
+            { answerText: 'int *y = &x;', isCorrect: false },
+            { answerText: 'int y = x;', isCorrect: false },
+            { answerText: 'reference int y = x;', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the purpose of the `virtual` keyword?',
+          answerOptions: [
+            { answerText: 'To create a static function', isCorrect: false },
+            { answerText: 'To ensure a function is defined in the base class', isCorrect: false },
+            { answerText: 'To enable dynamic polymorphism (runtime method binding)', isCorrect: true },
+            { answerText: 'To declare a constant function', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'How is memory allocated dynamically in C++?',
+          answerOptions: [
+            { answerText: '`malloc()` and `free()`', isCorrect: false },
+            { answerText: '`allocate()` and `deallocate()`', isCorrect: false },
+            { answerText: '`new` and `delete`', isCorrect: true },
+            { answerText: '`create()` and `destroy()`', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What does the `std::string` class do?',
+          answerOptions: [
+            { answerText: 'It is a character array that must be manually managed.', isCorrect: false },
+            { answerText: 'It provides a safe and easy way to handle strings of characters.', isCorrect: true },
+            { answerText: 'It is a template class for any data type.', isCorrect: false },
+            { answerText: 'It is a special kind of integer.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'Which operator is used for scope resolution?',
+          answerOptions: [
+            { answerText: '->', isCorrect: false },
+            { answerText: '::', isCorrect: true },
+            { answerText: '.', isCorrect: false },
+            { answerText: ':', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is a template in C++?',
+          answerOptions: [
+            { answerText: 'A function that can be used to create objects', isCorrect: false },
+            { answerText: 'A way to write generic classes and functions', isCorrect: true },
+            { answerText: 'A special type of class that cannot be inherited', isCorrect: false },
+            { answerText: 'A keyword used to declare a constant', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the difference between a `class` and a `struct` in C++?',
+          answerOptions: [
+            { answerText: 'A class is used for private members, a struct is for public members.', isCorrect: false },
+            { answerText: 'A class has private members by default, a struct has public members by default.', isCorrect: true },
+            { answerText: 'A class can have functions, a struct cannot.', isCorrect: false },
+            { answerText: 'There is no difference.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'How is a constant member function declared?',
+          answerOptions: [
+            { answerText: '`void func() const;`', isCorrect: true },
+            { answerText: '`const void func();`', isCorrect: false },
+            { answerText: '`void const func();`', isCorrect: false },
+            { answerText: '`const func();`', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is a "friend" function?',
+          answerOptions: [
+            { answerText: 'A function that can be called from outside the class', isCorrect: false },
+            { answerText: 'A function that can access the private and protected members of a class', isCorrect: true },
+            { answerText: 'A function that is part of another class', isCorrect: false },
+            { answerText: 'A function that can be inherited', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is a move constructor?',
+          answerOptions: [
+            { answerText: 'A constructor that creates a new object by copying another object', isCorrect: false },
+            { answerText: 'A constructor that creates a new object by "stealing" the resources of a temporary object', isCorrect: true },
+            { answerText: 'A constructor that can be used to move an object to a new memory location', isCorrect: false },
+            { answerText: 'A constructor that takes no arguments', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'Which header file is used for standard input/output streams like `cin` and `cout`?',
+          answerOptions: [
+            { answerText: '<stdio.h>', isCorrect: false },
+            { answerText: '<iostream>', isCorrect: true },
+            { answerText: '<string>', isCorrect: false },
+            { answerText: '<stdlib.h>', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the `this` pointer?',
+          answerOptions: [
+            { answerText: 'A pointer to a constant member of a class', isCorrect: false },
+            { answerText: 'A pointer that points to the object itself', isCorrect: true },
+            { answerText: 'A pointer to the base class object', isCorrect: false },
+            { answerText: 'A pointer to a virtual function table', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is function overloading?',
+          answerOptions: [
+            { answerText: 'Defining a function with the same name in a derived class', isCorrect: false },
+            { answerText: 'Defining multiple functions with the same name but different parameters', isCorrect: true },
+            { answerText: 'Defining a function that takes too many arguments', isCorrect: false },
+            { answerText: 'Overwriting a base class function with a new implementation', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What does `private` access specifier do?',
+          answerOptions: [
+            { answerText: 'Members are accessible only within the class itself', isCorrect: true },
+            { answerText: 'Members are accessible from anywhere', isCorrect: false },
+            { answerText: 'Members are accessible by the class and its derived classes', isCorrect: false },
+            { answerText: 'Members are hidden from the compiler', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'Which of the following is not a pillar of OOP?',
+          answerOptions: [
+            { answerText: 'Inheritance', isCorrect: false },
+            { answerText: 'Encapsulation', isCorrect: false },
+            { answerText: 'Polymorphism', isCorrect: false },
+            { answerText: 'Iteration', isCorrect: true },
+          ],
+        },
+        {
+          questionText: 'What is the purpose of `std::vector`?',
+          answerOptions: [
+            { answerText: 'A fixed-size array', isCorrect: false },
+            { answerText: 'A dynamic array that can grow and shrink in size', isCorrect: true },
+            { answerText: 'A linked list', isCorrect: false },
+            { answerText: 'A class for handling strings', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is a pure virtual function?',
+          answerOptions: [
+            { answerText: 'A virtual function with a body', isCorrect: false },
+            { answerText: 'A virtual function that can be overridden by a derived class', isCorrect: false },
+            { answerText: 'A virtual function that must be overridden by a derived class', isCorrect: true },
+            { answerText: 'A function that returns a void pointer', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the output of `cout << "Hello" << endl;`?',
+          answerOptions: [
+            { answerText: 'Hello', isCorrect: false },
+            { answerText: 'Hello followed by a newline', isCorrect: true },
+            { answerText: 'Error', isCorrect: false },
+            { answerText: 'Hello ', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is an abstract class?',
+          answerOptions: [
+            { answerText: 'A class with at least one pure virtual function that cannot be instantiated', isCorrect: true },
+            { answerText: 'A class that is used to create objects', isCorrect: false },
+            { answerText: 'A class that can only have private members', isCorrect: false },
+            { answerText: 'A class that can be inherited but not overridden', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the role of the `protected` access specifier?',
+          answerOptions: [
+            { answerText: 'Members can be accessed by the class and its derived classes, but not from outside', isCorrect: true },
+            { answerText: 'Members can be accessed from anywhere in the program', isCorrect: false },
+            { answerText: 'Members can only be accessed from within the class', isCorrect: false },
+            { answerText: 'Members are always constant', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is a copy constructor?',
+          answerOptions: [
+            { answerText: 'A constructor that takes no arguments', isCorrect: false },
+            { answerText: 'A constructor that creates an object by copying a previously created object', isCorrect: true },
+            { answerText: 'A constructor that is used to move an object', isCorrect: false },
+            { answerText: 'A constructor that initializes a class to zero', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is a `nullptr`?',
+          answerOptions: [
+            { answerText: 'An integer with the value of 0', isCorrect: false },
+            { answerText: 'A type-safe null pointer literal', isCorrect: true },
+            { answerText: 'A macro that expands to `NULL`', isCorrect: false },
+            { answerText: 'A constant pointer', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the correct syntax to create a new object of class `MyClass` on the heap?',
+          answerOptions: [
+            { answerText: '`MyClass myObject;`', isCorrect: false },
+            { answerText: '`MyClass* myObject = new MyClass();`', isCorrect: true },
+            { answerText: '`MyClass myObject = new MyClass();`', isCorrect: false },
+            { answerText: '`new MyClass* myObject;`', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the `std::cout` object used for?',
+          answerOptions: [
+            { answerText: 'Input from the user', isCorrect: false },
+            { answerText: 'Writing to the standard output stream (console)', isCorrect: true },
+            { answerText: 'Reading from a file', isCorrect: false },
+            { answerText: 'Writing to a file', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'Which function is called when a class object is destroyed?',
+          answerOptions: [
+            { answerText: '`destroy()`', isCorrect: false },
+            { answerText: '`deconstructor()`', isCorrect: false },
+            { answerText: 'The destructor', isCorrect: true },
+            { answerText: '`cleanup()`', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is a copy assignment operator?',
+          answerOptions: [
+            { answerText: 'An operator that creates a new object', isCorrect: false },
+            { answerText: 'An operator that assigns one object\'s values to another, pre-existing object', isCorrect: true },
+            { answerText: 'An operator that moves an object', isCorrect: false },
+            { answerText: 'An operator for logical comparison', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What does the `const` keyword do for a variable?',
+          answerOptions: [
+            { answerText: 'It ensures the variable is always 0', isCorrect: false },
+            { answerText: 'It specifies that the variable\'s value cannot be changed after initialization', isCorrect: true },
+            { answerText: 'It declares a new data type', isCorrect: false },
+            { answerText: 'It makes the variable accessible globally', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is a header guard?',
+          answerOptions: [
+            { answerText: 'A way to protect against viruses', isCorrect: false },
+            { answerText: 'A preprocessor directive to prevent a header file from being included multiple times', isCorrect: true },
+            { answerText: 'A function that checks for errors in a header file', isCorrect: false },
+            { answerText: 'A way to define a constant', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the purpose of the `main` function in C++?',
+          answerOptions: [
+            { answerText: 'It is the main class of the program.', isCorrect: false },
+            { answerText: 'It is the entry point of execution for every C++ program.', isCorrect: true },
+            { answerText: 'It is used to declare global variables.', isCorrect: false },
+            { answerText: 'It is a function that always returns a value.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the `static` keyword used for in a class member variable?',
+          answerOptions: [
+            { answerText: 'It makes the variable constant.', isCorrect: false },
+            { answerText: 'It means the variable is shared among all objects of the class.', isCorrect: true },
+            { answerText: 'It makes the variable private.', isCorrect: false },
+            { answerText: 'It defines a variable that is only visible inside a function.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the difference between a `pointer` and a `reference`?',
+          answerOptions: [
+            { answerText: 'A pointer cannot be null, a reference can.', isCorrect: false },
+            { answerText: 'A pointer is an alias for a variable, a reference stores a memory address.', isCorrect: false },
+            { answerText: 'A pointer can be re-assigned, a reference cannot.', isCorrect: true },
+            { answerText: 'They are exactly the same.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'Which of the following is a way to handle exceptions in C++?',
+          answerOptions: [
+            { answerText: '`if-else` statements', isCorrect: false },
+            { answerText: '`try`, `catch`, `throw`', isCorrect: true },
+            { answerText: '`goto` statements', isCorrect: false },
+            { answerText: '`switch` statements', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the purpose of the `delete[]` operator?',
+          answerOptions: [
+            { answerText: 'To delete a single object created with `new`', isCorrect: false },
+            { answerText: 'To delete a single object created on the stack', isCorrect: false },
+            { answerText: 'To delete an array of objects created with `new[]`', isCorrect: true },
+            { answerText: 'To delete an object from memory, but not its members', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is a namespace?',
+          answerOptions: [
+            { answerText: 'A tool for managing memory', isCorrect: false },
+            { answerText: 'A declarative region that provides a scope to the identifiers inside it', isCorrect: true },
+            { answerText: 'A type of class that contains static members', isCorrect: false },
+            { answerText: 'A new way to create a function', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is a shallow copy?',
+          answerOptions: [
+            { answerText: 'A copy that duplicates all of the data, including dynamically allocated memory', isCorrect: false },
+            { answerText: 'A copy that duplicates the object, but not the memory it points to', isCorrect: true },
+            { answerText: 'A copy that only duplicates the constant members', isCorrect: false },
+            { answerText: 'A copy that does not duplicate anything', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the `final` keyword used for in a class or function?',
+          answerOptions: [
+            { answerText: 'To make a class non-inheritable or a virtual function non-overridable', isCorrect: true },
+            { answerText: 'To create a constant variable', isCorrect: false },
+            { answerText: 'To end a program', isCorrect: false },
+            { answerText: 'To mark a class for garbage collection', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What does the `auto` keyword do?',
+          answerOptions: [
+            { answerText: 'It automatically initializes a variable to zero.', isCorrect: false },
+            { answerText: 'It deduces the type of a variable from its initializer.', isCorrect: true },
+            { answerText: 'It declares a static variable.', isCorrect: false },
+            { answerText: 'It creates a function that can be overloaded.', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is an `initializer list`?',
+          answerOptions: [
+            { answerText: 'A list of variables to be initialized in a function', isCorrect: false },
+            { answerText: 'A list of member variables in a constructor that are initialized before the constructor\'s body executes', isCorrect: true },
+            { answerText: 'A list of parameters for a function', isCorrect: false },
+            { answerText: 'A list of global variables', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is `RAII`?',
+          answerOptions: [
+            { answerText: 'A C++ standard for garbage collection', isCorrect: false },
+            { answerText: 'An acronym for "Resource Acquisition Is Initialization"', isCorrect: true },
+            { answerText: 'A way to create a new object', isCorrect: false },
+            { answerText: 'A memory allocation function', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the purpose of the `inline` keyword?',
+          answerOptions: [
+            { answerText: 'To make a function run on a single line of code', isCorrect: false },
+            { answerText: 'To request the compiler to replace the function call with the function body to reduce overhead', isCorrect: true },
+            { answerText: 'To declare a function that can be overloaded', isCorrect: false },
+            { answerText: 'To create a function that cannot be inherited', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'Which of the following is a smart pointer?',
+          answerOptions: [
+            { answerText: '`int*`', isCorrect: false },
+            { answerText: '`std::unique_ptr`', isCorrect: true },
+            { answerText: '`void*`', isCorrect: false },
+            { answerText: '`char*`', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the output of `cout << (5 > 3 ? "yes" : "no");`?',
+          answerOptions: [
+            { answerText: '`yes`', isCorrect: true },
+            { answerText: '`no`', isCorrect: false },
+            { answerText: '`1`', isCorrect: false },
+            { answerText: '`True`', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is an rvalue reference?',
+          answerOptions: [
+            { answerText: 'A reference to a variable that can be assigned a new value', isCorrect: false },
+            { answerText: 'A reference to a temporary object that can be "moved" from', isCorrect: true },
+            { answerText: 'A reference to a constant variable', isCorrect: false },
+            { answerText: 'A reference that can be re-assigned', isCorrect: false },
+          ],
+        },
+        {
+          questionText: 'What is the `explicit` keyword used for in a constructor?',
+          answerOptions: [
+            { answerText: 'To allow implicit conversions from a single argument', isCorrect: false },
+            { answerText: 'To prevent implicit conversions from a single argument', isCorrect: true },
+            { answerText: 'To declare a constant constructor', isCorrect: false },
+            { answerText: 'To make a constructor public', isCorrect: false },
+          ],
+        },
+      ];
+
+    // The main App component
+    const App = () => {
+      const [currentQuestion, setCurrentQuestion] = useState(0);
+      const [showScore, setShowScore] = useState(false);
+      const [userAnswers, setUserAnswers] = useState(Array(questions.length).fill(null));
+
+      const sidebarRef = useRef(null);
+
+      useEffect(() => {
+        if (sidebarRef.current) {
+          const activeElement = sidebarRef.current.querySelector('.bg-blue-600');
+          if (activeElement) {
+            activeElement.scrollIntoView({
+              behavior: 'smooth',
+              block: 'nearest'
+            });
+          }
+        }
+      }, [currentQuestion]);
+
+      const handleAnswerOptionClick = (answerIndex) => {
+        const newAnswers = [...userAnswers];
+        newAnswers[currentQuestion] = answerIndex;
+        setUserAnswers(newAnswers);
+      };
+
+      const handleNextClick = () => {
+        const nextQuestion = currentQuestion + 1;
+        if (nextQuestion < questions.length) {
+          setCurrentQuestion(nextQuestion);
+        } else {
+          setShowScore(true);
+        }
+      };
+
+      const handlePreviousClick = () => {
+        const previousQuestion = currentQuestion - 1;
+        if (previousQuestion >= 0) {
+          setCurrentQuestion(previousQuestion);
+        }
+      };
+      
+      const handleSkipClick = () => {
+        handleNextClick();
+      };
+      
+      const handleQuestionNumberClick = (questionNumber) => {
+        setCurrentQuestion(questionNumber - 1);
+      };
+
+      const calculateScore = () => {
+        return userAnswers.reduce((total, answerIndex, index) => {
+          if (answerIndex !== null) {
+            const isCorrect = questions[index].answerOptions[answerIndex].isCorrect;
+            return total + (isCorrect ? 1 : 0);
+          }
+          return total;
+        }, 0);
+      };
+
+      const restartQuiz = () => {
+        setCurrentQuestion(0);
+        setUserAnswers(Array(questions.length).fill(null));
+        setShowScore(false);
+      };
+
+      const currentAnswerIndex = userAnswers[currentQuestion];
+      const finalScore = showScore ? calculateScore() : 0;
+      
+      // The render method is now pure JavaScript
+      return e('div', { className: 'bg-gray-100 min-h-screen font-sans flex items-center justify-center p-4 dark:bg-gray-900 transition-colors duration-300' },
+        e('div', { className: 'bg-white dark:bg-gray-800 shadow-2xl rounded-3xl p-8 w-full h-full max-w-screen-lg flex flex-col md:flex-row gap-8 text-gray-800 dark:text-gray-200 transition-colors duration-300' },
+          e('div', { className: 'md:flex-1 w-full animate-fadeIn' },
+            showScore ?
+              e('div', { className: 'text-center md:p-8' },
+                e('div', { className: 'flex justify-center mb-6' }, e(BadgeCheck, { className: 'w-16 h-16 text-green-500' })),
+                e('h2', { className: 'text-3xl sm:text-4xl font-extrabold mb-4' }, 'Quiz Complete!'),
+                e('p', { className: 'text-xl mb-8' },
+                  'You scored ',
+                  e('span', { className: 'text-blue-500 font-bold' }, finalScore),
+                  ` out of ${questions.length}`
+                ),
+                e('button', {
+                  onClick: restartQuiz,
+                  className: 'group relative flex items-center justify-center px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50'
+                }, e(RefreshCcw, { className: 'w-5 h-5 mr-2 transition-all duration-300 group-hover:rotate-180' }), 'Restart Quiz')
+              ) :
+              e('div', { className: 'w-full' },
+                e('div', { className: 'mb-6' },
+                  e('h1', { className: 'text-4xl font-extrabold text-center text-blue-600 dark:text-blue-400 mb-2' }, 'C++ Programming Quiz'),
+                  e('div', { className: 'flex justify-between items-center' },
+                    e('div', { className: 'text-lg font-semibold text-blue-600 dark:text-blue-400' }, `Question ${currentQuestion + 1} / ${questions.length}`),
+                    e('div', { className: 'text-xl font-bold' },
+                      e('span', { className: 'text-green-500' }, userAnswers.filter(answer => answer !== null).length),
+                      ' answered'
+                    )
+                  )
+                ),
+                e('div', { className: 'mb-8' },
+                  e('h2', { className: 'text-2xl sm:text-3xl font-extrabold leading-tight' }, questions[currentQuestion].questionText)
+                ),
+                e('div', { className: 'flex flex-col space-y-4 mb-8' },
+                  questions[currentQuestion].answerOptions.map((answerOption, index) =>
+                    e('button', {
+                      key: index,
+                      onClick: () => handleAnswerOptionClick(index),
+                      className: `group relative flex items-center w-full px-6 py-4 text-left text-lg rounded-xl shadow-md transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 ${currentAnswerIndex === index ? 'bg-blue-600 text-white shadow-lg' : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-blue-100 dark:hover:bg-blue-600'}`
+                    },
+                      e('span', { className: 'flex-1' }, answerOption.answerText),
+                      currentAnswerIndex === index && e(BadgeCheck, { className: 'w-6 h-6 ml-4 text-white' })
+                    )
+                  )
+                ),
+                e('div', { className: 'flex justify-between gap-4' },
+                  e('button', {
+                    onClick: handlePreviousClick,
+                    disabled: currentQuestion === 0,
+                    className: `group relative flex items-center justify-center px-6 py-3 font-bold rounded-full transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 ${currentQuestion === 0 ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed' : 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-600'}`
+                  }, e(ChevronLeft, { className: 'w-5 h-5 mr-2' }), 'Previous'),
+                  e('div', { className: 'flex gap-4' },
+                    currentQuestion < questions.length - 1 && e('button', {
+                      onClick: handleSkipClick,
+                      className: 'group relative flex items-center justify-center px-8 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-bold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-yellow-500 focus:ring-opacity-50'
+                    }, 'Skip', e(ChevronsRight, { className: 'w-5 h-5 ml-2 transition-all duration-300 group-hover:translate-x-1' })),
+                    currentQuestion < questions.length - 1 ? e('button', {
+                      onClick: handleNextClick,
+                      disabled: currentAnswerIndex === null,
+                      className: 'group relative flex items-center justify-center px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50'
+                    }, 'Next', e(ChevronRight, { className: 'w-5 h-5 ml-2 transition-all duration-300 group-hover:translate-x-1' })) : e('button', {
+                      onClick: handleNextClick,
+                      className: 'group relative flex items-center justify-center px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-green-500 focus:ring-opacity-50'
+                    }, 'Submit Quiz', e(BadgeCheck, { className: 'w-5 h-5 ml-2 transition-all duration-300 group-hover:rotate-12' }))
+                  )
+                )
+              )
+          ),
+          e('div', { className: 'md:w-64 w-full md:block hidden animate-fadeInLeft' },
+            e('div', { className: 'bg-gray-50 dark:bg-gray-700 rounded-2xl p-6 h-full overflow-y-auto shadow-md' },
+              e('h3', { className: 'text-lg font-bold text-gray-800 dark:text-gray-200 mb-4 sticky top-0 bg-gray-50 dark:bg-gray-700 pt-1 pb-2 border-b border-gray-200 dark:border-gray-600' }, 'Jump to Question'),
+              e('div', { ref: sidebarRef, className: 'flex flex-wrap gap-2 justify-center' },
+                questions.map((_, index) =>
+                  e('button', {
+                    key: index,
+                    onClick: () => handleQuestionNumberClick(index + 1),
+                    className: `w-10 h-10 text-sm font-bold rounded-full transition-all duration-200 ${currentQuestion === index ? 'bg-blue-600 text-white shadow-lg transform scale-110' : userAnswers[index] !== null ? 'bg-green-500 text-white hover:bg-green-600 shadow-md' : 'bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-500'}`
+                  }, index + 1)
+                )
+              )
+            )
+          )
+        )
+      );
+    };
+
+    // Render the React component into the root element
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(e(App));
+  </script>
+</body>
+</html>
